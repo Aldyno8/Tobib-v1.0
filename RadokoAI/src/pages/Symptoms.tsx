@@ -67,7 +67,7 @@ const Symptoms: React.FC<SymptomInputProps> = () => {
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6">
-      <Button onClick={handleClick} className={`${!isMask ? "hidden" : "block"} bg-green-500 text-white hover:bg-green-600 transition-all`}>
+      <Button onClick={handleClick} className={`${!isMask ? "hidden" : "block"} bg-primary text-white hover:bg-green-600 transition-all`}>
         Analyser des symptômes
       </Button>
       
