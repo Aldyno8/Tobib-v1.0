@@ -1,11 +1,24 @@
+from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder
 import pandas as pd
 
-df = pd.read_csv("./ML/data/data_3.csv")
+df = pd.read_csv("./ML/data/data3_process.csv")
 
-df['Symptoms'] = df.iloc[:, 1:].apply(lambda x: ', '.join(x.dropna().astype(str)), axis=1)
+df['Symptoms'] = df['Symptoms'].apply(lambda x: x.split(', '))
 
-df_transformed = df[['Disease', 'Symptoms']]
+multi_encoder = MultiLabelBinarizer()
+symptoms_encoded = multi_encoder.fit_transform(df['Symptoms'])
 
-df_transformed.to_csv("./ML/data/data3_process.csv", index=False)
+df_symptoms = pd.DataFrame(symptoms_encoded, columns=multi_encoder.classes_)
+
+df_encoded = pd.concat([df['Disease'], df_symptoms], axis=1)
+
+label_endcoder = LabelEncoder()
+df_encoded['Disease'] = label_endcoder.fit_transform(df_encoded['Disease'])
+print(df_encoded.head())
+
+df_encoded.to_csv("./ML/data/data_final_encoded.csv", index=False)
+
+disease_mapping = dict(zip(label_endcoder.classes_, label_endcoder.transform(label_endcoder.classes_)))
+reverse_mapping = {v: k for k, v in disease_mapping.items()}
 
 
