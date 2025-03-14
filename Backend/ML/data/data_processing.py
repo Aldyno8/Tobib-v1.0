@@ -14,7 +14,6 @@ df_encoded = pd.concat([df['Disease'], df_symptoms], axis=1)
 
 label_endcoder = LabelEncoder()
 df_encoded['Disease'] = label_endcoder.fit_transform(df_encoded['Disease'])
-print(df_encoded.head())
 
 df_encoded.to_csv("./ML/data/data_final_encoded.csv", index=False)
 
