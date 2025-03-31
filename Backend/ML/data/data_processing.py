@@ -3,7 +3,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from imblearn.over_sampling import RandomOverSampler
+from sklearn.metrics import precision_score, recall_score
 import pandas as pd
+import numpy as np
 
 df = pd.read_csv("./ML/data/data_3.csv")
 df = df.dropna(axis=0)
@@ -22,8 +24,8 @@ df['Name'] = y_resampled
 
 df['Symptoms'] = df['Symptoms'].apply(lambda x: x.split(', '))
 df['Treatments'] = df['Treatments'].apply(lambda x: x.split(', '))
-multi_encoder = MultiLabelBinarizer()
 
+multi_encoder = MultiLabelBinarizer()
 
 symptoms_encoded = multi_encoder.fit_transform(df['Symptoms'])
 symptoms_dataframe = pd.DataFrame(symptoms_encoded, columns=multi_encoder.classes_)
@@ -45,7 +47,7 @@ y = new_df['Name']
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+model = RandomForestClassifier(random_state=42)
 model.fit(x_train, y_train)
 
 y_predict_test = model.predict(x_test)
@@ -54,6 +56,21 @@ y_predict_train = model.predict(x_train)
 accuracy_score_test = accuracy_score(y_test, y_predict_test)
 accuracy_score_train = accuracy_score(y_train, y_predict_train)
 
+precision = precision_score(y_test, y_predict_test, average='macro', zero_division=1)
+recall = recall_score(y_test, y_predict_test, average='macro', zero_division=1)
+
+
+classes_true = set(np.unique(y_test))
+classes_pred = set(np.unique(y_predict_test))
+
+missing_in_pred = classes_true - classes_pred
+missing_in_true = classes_pred - classes_true
+
+print("Classes présentes dans y_true mais absentes dans y_pred :", len(missing_in_pred))
+print("Classes présentes dans y_pred mais absentes dans y_true :", len(missing_in_true))
+
 print(f"Accuracy test: {accuracy_score_test}")
 print(f"Accuracy: {accuracy_score_train}")
+print(f"Precision: {precision}")
+print(f"Recall: {recall}")
 
