@@ -19,7 +19,6 @@ X_resampled, y_resampled = ros.fit_resample(X, y)
 df = pd.DataFrame(X_resampled, columns=X.columns)
 df['Name'] = y_resampled
 
-print(df.shape)
 
 df['Symptoms'] = df['Symptoms'].apply(lambda x: x.split(', '))
 df['Treatments'] = df['Treatments'].apply(lambda x: x.split(', '))
@@ -41,13 +40,12 @@ new_df['Name'] = label_endcoder.fit_transform(new_df['Name'])
 df_mapping = dict(zip(label_endcoder.classes_, label_endcoder.transform(label_endcoder.classes_)))
 reverse_mapping = {v: k for k, v in df_mapping.items()}
 
-
 x = new_df.drop(columns=['Name'])
 y = new_df['Name']
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
 
-model = RandomForestClassifier()
+model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(x_train, y_train)
 
 y_predict_test = model.predict(x_test)
