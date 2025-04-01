@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.metrics import precision_score, recall_score
+from deep_translator import GoogleTranslator
 import pandas as pd
 import numpy as np
 
@@ -27,17 +28,16 @@ df['Treatments'] = df['Treatments'].apply(lambda x: x.split(', '))
 
 multi_encoder = MultiLabelBinarizer()
 
+# treatments_encoded = multi_encoder.fit_transform(df['Treatments'])
+# treatments_dataframe = pd.DataFrame(treatments_encoded, columns=multi_encoder.classes_)
+
 symptoms_encoded = multi_encoder.fit_transform(df['Symptoms'])
 symptoms_dataframe = pd.DataFrame(symptoms_encoded, columns=multi_encoder.classes_)
 
-treatments_encoded = multi_encoder.fit_transform(df['Treatments'])
-treatments_dataframe = pd.DataFrame(treatments_encoded, columns=multi_encoder.classes_)
-
-new_df = pd.concat([df['Name'], symptoms_dataframe, treatments_dataframe], axis=1)
+new_df = pd.concat([df['Name'], symptoms_dataframe], axis=1)
 
 label_endcoder = LabelEncoder()
 new_df['Name'] = label_endcoder.fit_transform(new_df['Name'])
-
 
 df_mapping = dict(zip(label_endcoder.classes_, label_endcoder.transform(label_endcoder.classes_)))
 reverse_mapping = {v: k for k, v in df_mapping.items()}
@@ -60,17 +60,20 @@ precision = precision_score(y_test, y_predict_test, average='macro', zero_divisi
 recall = recall_score(y_test, y_predict_test, average='macro', zero_division=1)
 
 
-classes_true = set(np.unique(y_test))
-classes_pred = set(np.unique(y_predict_test))
-
-missing_in_pred = classes_true - classes_pred
-missing_in_true = classes_pred - classes_true
-
-print("Classes présentes dans y_true mais absentes dans y_pred :", len(missing_in_pred))
-print("Classes présentes dans y_pred mais absentes dans y_true :", len(missing_in_true))
-
 print(f"Accuracy test: {accuracy_score_test}")
 print(f"Accuracy: {accuracy_score_train}")
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
 
+
+def test():
+    symptoms = ['Motor', 'cognitive',]
+    test = pd.DataFrame(symptoms)
+    test = multi_encoder.transform([symptoms])
+    prediction = model.predict(test)
+    translator = GoogleTranslator(source='en', target='fr')
+    
+    print(translator.translate(reverse_mapping[prediction[0]]))
+
+print("\n")
+test()  
