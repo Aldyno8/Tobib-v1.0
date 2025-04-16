@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import Group
-from django.contrib.auth.models import User as AbstractUser
+from Auth.models import User
 
 class GroupsSerialisers(serializers.ModelSerializer):
     class Meta:
@@ -9,5 +9,5 @@ class GroupsSerialisers(serializers.ModelSerializer):
 class UserSerialiser(serializers.ModelSerializer):
     user_groups = GroupsSerialisers(many=True, source='groups')
     class Meta:
-        model = AbstractUser
-        fields = ['username', 'email', 'user_groups']
+        model = User
+        fields = ['username', 'email', 'user_groups', 'age', 'gender', 'blood_pressure', 'cholesterol_level']
