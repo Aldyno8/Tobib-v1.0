@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'Auth',
     'AssistantAi',
     'corsheaders',
+	'ContactPro',
+	'Treatment',
     
 ]
 
