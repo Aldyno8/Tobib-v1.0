@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from Auth import serialisers
-from Auth.models import User
+from Auth.models import UserAbstract
 
 class UserRegister(APIView):
     permission_classes = [AllowAny]
@@ -17,7 +17,7 @@ class UserRegister(APIView):
         cholesterol_level = request.data.get("cholesterol_level")
         password = request.data.get("password")
         try:
-            user = User(username=username, email=email, age=age, gender=gender, blood_pressure=blood_pressure, cholesterol_level=cholesterol_level)
+            user = UserAbstract(username=username, email=email, age=age, gender=gender, blood_pressure=blood_pressure, cholesterol_level=cholesterol_level)
             user.set_password(password)
             user.save()
             return Response({"message": "Compte crée avec succes"}, status=status.HTTP_201_CREATED)
@@ -25,15 +25,15 @@ class UserRegister(APIView):
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
         
 class UserListView(generics.ListAPIView):
-    queryset = User.objects.all()
+    queryset = UserAbstract.objects.all()
     serializer_class = serialisers.UserSerialiser
     
 class UpdateUserView(generics.UpdateAPIView):
-    queryset = User.objects.all()
+    queryset = UserAbstract.objects.all()
     serializer_class = serialisers.UserSerialiser
 
 class UserDeleteView(generics.DestroyAPIView):
-    queryset = User.objects.all()
+    queryset = UserAbstract.objects.all()
     serializer_class = serialisers.UserSerialiser
     
 class UserProfilView(APIView):

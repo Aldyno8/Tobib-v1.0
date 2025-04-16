@@ -6,4 +6,7 @@ class ContactPro(models.Model):
 	email = models.EmailField()
 	speciality = models.CharField(max_length=255)
 	created_at = models.DateTimeField(auto_now_add=True)
-    
+	workplace = models.CharField(max_length=255)
+
+	def __str__(self):
+		return self.name

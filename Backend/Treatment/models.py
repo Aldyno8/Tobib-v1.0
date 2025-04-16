@@ -1,11 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
-from datetime import timedelta
-from datetime import datetime
+from Auth.models import UserAbstract
+from datetime import timedelta, datetime
 
 # Create your models here.
 class Treatment(models.Model):
-	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	user = models.ForeignKey(UserAbstract, on_delete=models.CASCADE)
 	medocs_name = models.CharField(max_length=200)
 	frequency = models.IntegerField()
 	created_at = models.DateTimeField(auto_now_add=True)
