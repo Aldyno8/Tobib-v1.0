@@ -5,42 +5,70 @@ from rest_framework import status
 from rest_framework.views import APIView
 from Auth import serialisers
 from Auth.models import UserAbstract
+from Auth.permissions import IsDoctor, IsPatient
 
-class UserRegister(APIView):
+class PatientRegister(APIView):
     permission_classes = [AllowAny]
+    
     def post(self, request):
-        username = request.data.get("username")
-        email = request.data.get("email") 
-        age = request.data.get("age")
-        gender = request.data.get("gender")
-        blood_pressure = request.data.get("blood_pressure")
-        cholesterol_level = request.data.get("cholesterol_level")
-        password = request.data.get("password")
         try:
-            user = UserAbstract(username=username, email=email, age=age, gender=gender, blood_pressure=blood_pressure, cholesterol_level=cholesterol_level)
-            user.set_password(password)
-            user.save()
-            return Response({"message": "Compte crée avec succes"}, status=status.HTTP_201_CREATED)
+            serializer = serialisers.PatientRegisterSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"message": "Compte patient créé avec succès"}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+class DoctorRegister(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        try:
+            serializer = serialisers.DoctorRegisterSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"message": "Compte docteur créé avec succès"}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+
 class UserListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = UserAbstract.objects.all()
     serializer_class = serialisers.UserSerialiser
-    
+
 class UpdateUserView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = UserAbstract.objects.all()
     serializer_class = serialisers.UserSerialiser
 
 class UserDeleteView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = UserAbstract.objects.all()
     serializer_class = serialisers.UserSerialiser
-    
+
 class UserProfilView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         user = request.user
         try:
-            serialiser = serialisers.UserSerialiser(user)
-            return Response(serialiser.data, status=status.HTTP_200_OK)
+            serializer = serialisers.UserSerialiser(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as error:
-            return Response({"message":str(error)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+
+class DoctorDashboardView(APIView):
+    permission_classes = [IsAuthenticated, IsDoctor]
+    
+    def get(self, request):
+        # Logique spécifique au tableau de bord du docteur
+        return Response({"message": "Bienvenue sur le tableau de bord des docteurs"})
+
+class PatientDashboardView(APIView):
+    permission_classes = [IsAuthenticated, IsPatient]
+    
+    def get(self, request):
+        # Logique spécifique au tableau de bord du patient
+        return Response({"message": "Bienvenue sur le tableau de bord des patients"})

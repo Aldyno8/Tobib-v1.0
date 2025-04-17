@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
 	'ContactPro',
 	'Treatment',
+	'django_extensions',
     
 ]
 
@@ -76,6 +77,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Backend.urls'
+AUTH_USER_MODEL = 'Auth.UserAbstract'
 
 TEMPLATES = [
     {
@@ -156,6 +158,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-CORS_ALLOW_ORIGINS = "127.0.0.1:5173"
+# CORS_ALLOW_ORIGINS = "127.0.0.1:5173"
 CORS_ALLOW_ALL_ORIGINS = True
 
