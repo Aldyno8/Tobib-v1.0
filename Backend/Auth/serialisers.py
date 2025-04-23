@@ -31,6 +31,9 @@ class PatientRegisterSerializer(serializers.ModelSerializer):
             cholesterol_level=validated_data.get('cholesterol_level'),
             is_doctor=False
         )
+        patient_group = Group.objects.get(name='Patients')
+        user.groups.add(patient_group)
+        
         return user
 
 class DoctorRegisterSerializer(serializers.ModelSerializer):
@@ -38,7 +41,7 @@ class DoctorRegisterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserAbstract
-        fields = ['username', 'email', 'password', 'specialization', 'workplace']
+        fields = ['username', 'email', 'password', 'specialization']
     
     def create(self, validated_data):
         user = UserAbstract.objects.create_user(
@@ -46,9 +49,13 @@ class DoctorRegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password'],
             specialization=validated_data['specialization'],
-            workplace=validated_data['workplace'],
             is_doctor=True
         )
+        
+        # Ajouter l'utilisateur au groupe Doctors
+        doctor_group = Group.objects.get(name='Doctors')
+        user.groups.add(doctor_group)
+        
         return user
 
 class DoctorSerializer(serializers.ModelSerializer):

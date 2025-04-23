@@ -4,6 +4,13 @@ from django.contrib.contenttypes.models import ContentType
 from Treatment.models import Treatment
 from ContactPro.models import Slot, Appointement
 
+def ensure_groups_exist():
+    """
+    Vérifie et crée les groupes s'ils n'existent pas
+    """
+    Group.objects.get_or_create(name='Patients')
+    Group.objects.get_or_create(name='Doctors')
+
 class IsDoctor(permissions.BasePermission):
     """
     Permission personnalisée pour vérifier si l'utilisateur est un docteur
@@ -19,8 +26,9 @@ class IsPatient(permissions.BasePermission):
         return request.user and request.user.is_authenticated and not request.user.is_doctor 
 
 def setup_permissions():
-    patient_group, _ = Group.objects.get_or_create(name='Patients')
-    doctor_group, _ = Group.objects.get_or_create(name='Doctors')
+    ensure_groups_exist()
+    patient_group = Group.objects.get(name='Patients')
+    doctor_group = Group.objects.get(name='Doctors')
     
     treatment_content_type = ContentType.objects.get_for_model(Treatment)
     slot_content_type = ContentType.objects.get_for_model(Slot)
