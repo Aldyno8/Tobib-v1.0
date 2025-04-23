@@ -27,33 +27,64 @@ def setup_permissions():
     appointment_content_type = ContentType.objects.get_for_model(Appointement)
 
     patient_permissions = [
-        'view_treatment',
-        'create_treatment',
+        'add_appointement',
+        'change_appointement',
+        'delete_appointement',
+        'view_appointement',
+        'add_treatment',
         'change_treatment',
         'delete_treatment',
-        'view_doctor_list',
-        'reserve_slot',
-        'view_available_slots',
-        'view_patient_appointement',
+        'view_treatment',
+        'view_slot'
     ]
     
     doctor_permissions = [
-        'create_slot',
-        'delete_slot',
+        'add_slot',
         'change_slot',
-        'view_doctor_appointement',
+        'delete_slot',
+        'delete_appointement',
+        'change_appointement',
+        'view_appointement',
+        'view_slot',
     ]
-    
+
     for codename in patient_permissions:
-        permission = Permission.objects.get(
-            codename=codename,
-            content_type= treatment_content_type
-        )
-        patient_group.permissions.add(permission)
+        if (codename.split("_")[1] == "treatment"):
+            permission = Permission.objects.get(
+                codename=codename,
+                content_type= treatment_content_type
+            )
+            patient_group.permissions.add(permission)
+        elif (codename.split("_")[1] == "slot"):
+            permission = Permission.objects.get(
+                codename=codename,
+                content_type= slot_content_type
+            )
+            patient_group.permissions.add(permission)
+        elif (codename.split("_")[1] == "appointement"):
+            permission = Permission.objects.get(
+                codename=codename,
+                content_type= appointment_content_type
+            )
+            patient_group.permissions.add(permission)
+
     
     for codename in doctor_permissions:
-        permission = Permission.objects.get(
-            codename=codename,
-            content_type=treatment_content_type
-        )
-        doctor_group.permissions.add(permission)
+        if (codename.split("_")[1] == "treatment"):
+            permission = Permission.objects.get(
+                codename=codename,
+                content_type= treatment_content_type
+            )
+            doctor_group.permissions.add(permission)
+        elif (codename.split("_")[1] == "slot"):
+            permission = Permission.objects.get(
+                codename=codename,
+                content_type= slot_content_type
+            )
+            doctor_group.permissions.add(permission)
+        elif (codename.split("_")[1] == "appointement"):
+            permission = Permission.objects.get(
+                codename=codename,
+                content_type= appointment_content_type
+            )
+            doctor_group.permissions.add(permission)
