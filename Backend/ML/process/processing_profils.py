@@ -4,6 +4,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.preprocessing import LabelEncoder
+import os
+import joblib
 
 df = pd.read_csv('data.csv')
 df = df[df["Outcome Variable"] == "Positive"]
@@ -75,3 +77,13 @@ print(f"Accuracy: {accuracy_score_train}")
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
 print(f"f1_score: {f1score}")
+
+# Sauvegarde du modèle et du mapping
+# Création du dossier models s'il n'existe pas
+os.makedirs("Backend/ML/models", exist_ok=True)
+
+# Sauvegarde du modèle
+joblib.dump(model, "Backend/ML/models/profils.pkl")
+
+# Sauvegarde du mapping inverse
+joblib.dump(reverse_mapping, "Backend/ML/models/reverse_mapping.pkl")

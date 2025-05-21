@@ -23,4 +23,24 @@ class UserAbstract(AbstractUser):
     
     def __str__(self):
         return self.username
+    
+    def is_doctor_user(self):
+        """Vérifie si l'utilisateur est un docteur"""
+        return self.is_doctor
+    
+    def is_patient_user(self):
+        """Vérifie si l'utilisateur est un patient"""
+        return not self.is_doctor
+    
+    def get_user_type(self):
+        """Retourne le type d'utilisateur"""
+        return 'doctor' if self.is_doctor else 'patient'
+    
+    def has_doctor_permissions(self):
+        """Vérifie si l'utilisateur a les permissions de docteur"""
+        return self.is_doctor and self.groups.filter(name='Doctors').exists()
+    
+    def has_patient_permissions(self):
+        """Vérifie si l'utilisateur a les permissions de patient"""
+        return not self.is_doctor and self.groups.filter(name='Patients').exists()
      

@@ -8,8 +8,7 @@ from Auth.models import UserAbstract
 from Auth.permissions import IsDoctor, IsPatient
 
 class PatientRegister(APIView):
-    permission_classes = [AllowAny]
-    
+    permission_classes = [AllowAny]   
     def post(self, request):
         try:
             serializer = serialisers.PatientRegisterSerializer(data=request.data)
@@ -21,8 +20,7 @@ class PatientRegister(APIView):
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
 class DoctorRegister(APIView):
-    permission_classes = [AllowAny]
-    
+    permission_classes = [AllowAny]    
     def post(self, request):
         try:
             serializer = serialisers.DoctorRegisterSerializer(data=request.data)
@@ -59,16 +57,14 @@ class UserProfilView(APIView):
         except Exception as error:
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
-class DoctorDashboardView(APIView):
-    permission_classes = [IsAuthenticated, IsDoctor]
-    
+class DoctorDashboardView(APIView): 
     def get(self, request):
-        # Logique spécifique au tableau de bord du docteur
+        if not request.user.is_doctor:
+            return Response({"message": "Vous n'avez pas les permissions pour accéder à ce tableau de bord"}, status=status.HTTP_403_FORBIDDEN)
         return Response({"message": "Bienvenue sur le tableau de bord des docteurs"})
 
 class PatientDashboardView(APIView):
-    permission_classes = [IsAuthenticated, IsPatient]
-    
     def get(self, request):
-        # Logique spécifique au tableau de bord du patient
+        if request.user.is_doctor:
+            return Response({"message": "Vous n'avez pas les permissions pour accéder à ce tableau de bord"}, status=status.HTTP_403_FORBIDDEN)
         return Response({"message": "Bienvenue sur le tableau de bord des patients"})
