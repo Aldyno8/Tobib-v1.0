@@ -61,11 +61,11 @@ class DoctorRegisterSerializer(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAbstract
-        fields = ['username', 'email', 'specialization', 'workplace']
+        fields = ['id','username', 'email', 'specialization', 'workplace']
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAbstract
-        fields = ['username', 'email', 'age', 'gender', 'blood_pressure', 'cholesterol_level']
+        fields = ['id','username', 'email', 'age', 'gender', 'blood_pressure', 'cholesterol_level']
 
 
