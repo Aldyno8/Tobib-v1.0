@@ -39,7 +39,7 @@ SECRET_KEY = 'django-insecure-471^gc1hd!@mt84+hr#30bbkg1efo=q%(e90)$0356a002n$%7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [get_local_ip()] 
+ALLOWED_HOSTS = [get_local_ip(), 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -60,6 +60,15 @@ INSTALLED_APPS = [
 	'channels',
     
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 ASGI_APPLICATION = 'Backend.asgi.application'
 
