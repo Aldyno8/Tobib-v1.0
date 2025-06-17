@@ -431,3 +431,86 @@ Supprimer un traitement.
 | 404 | Ressource non trouvée |
 | 500 | Erreur serveur |
 
+## API WebSocket Chatbot
+
+### Connexion WebSocket
+```
+ws://localhost:8800/ws/chatbot/
+```
+
+### Format des Messages
+
+#### Connexion
+Lors de la connexion, le serveur envoie :
+```json
+{
+    "type": "connection_established",
+    "message": "Connexion établie avec le chatbot"
+}
+```
+
+#### Envoi de Message
+Format pour envoyer un message au chatbot :
+```json
+{
+    "message": "Votre message ici"
+}
+```
+
+#### Réception de Message
+Format de la réponse du chatbot :
+```json
+{
+    "type": "chat_message",
+    "message": "Réponse du chatbot"
+}
+```
+
+#### Message d'Erreur
+En cas d'erreur :
+```json
+{
+    "type": "error",
+    "message": "Description de l'erreur"
+}
+```
+
+### Exemple d'Utilisation avec JavaScript
+
+```javascript
+const socket = new WebSocket('ws://localhost:8800/ws/chatbot/');
+
+socket.onopen = function(e) {
+    console.log('Connexion établie');
+};
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    switch(data.type) {
+        case 'connection_established':
+            console.log('Connecté au chatbot');
+            break;
+        case 'chat_message':
+            console.log('Réponse du chatbot:', data.message);
+            break;
+        case 'error':
+            console.error('Erreur:', data.message);
+            break;
+    }
+};
+
+// Envoyer un message
+function sendMessage(message) {
+    socket.send(JSON.stringify({
+        message: message
+    }));
+}
+```
+
+### Notes Importantes
+
+- La connexion WebSocket nécessite une clé API Google valide (GOOGLE_API_KEY)
+- Les messages sont traités de manière asynchrone
+- La connexion est maintenue jusqu'à ce que le client se déconnecte
+- Les erreurs sont gérées et renvoyées au client
+

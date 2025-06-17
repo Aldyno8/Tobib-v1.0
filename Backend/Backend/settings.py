@@ -11,7 +11,20 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import os
+import os, socket
+
+def get_local_ip():
+    s = None
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip_address = s.getsockname()[0]
+    except Exception as e:
+        ip_address = f"Erreur lors de la récupération de l'IP locale : {e}"
+    finally:
+        if s: 
+            s.close()
+    return ip_address
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +39,7 @@ SECRET_KEY = 'django-insecure-471^gc1hd!@mt84+hr#30bbkg1efo=q%(e90)$0356a002n$%7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.88.15"]
+ALLOWED_HOSTS = [get_local_ip()] 
 
 # Application definition
 
@@ -44,8 +57,11 @@ INSTALLED_APPS = [
 	'ContactPro',
 	'Treatment',
 	'django_extensions',
+	'channels',
     
 ]
+
+ASGI_APPLICATION = 'Backend.asgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -160,4 +176,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # CORS_ALLOW_ORIGINS = "127.0.0.1:5173"
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Channels Configuration
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
