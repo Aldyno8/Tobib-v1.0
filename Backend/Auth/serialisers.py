@@ -68,4 +68,4 @@ class PatientSerializer(serializers.ModelSerializer):
         model = UserAbstract
         fields = ['username', 'email', 'age', 'gender', 'blood_pressure', 'cholesterol_level']
 
-
+ 

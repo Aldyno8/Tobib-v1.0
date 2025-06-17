@@ -37,7 +37,7 @@ class GetAvailableSlot(APIView):
     permission_classes = [IsAuthenticated, IsPatient]
     def get(self, request):
         try:
-            slots = Slot.objects.filter(is_available=True)
+            slots = Slot.objects.filter(is_available=True)   
             serializer = SlotSerialiser(slots, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:

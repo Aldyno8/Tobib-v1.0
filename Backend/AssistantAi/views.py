@@ -48,3 +48,19 @@ class PostSymptoms(APIView):
     def _map_cholesterol(self, value):
         mapping = {"low": 0, "Normal": 1, "High": 2}
         return mapping.get(value, 1)
+
+class ChatBot(APIView):
+    def post(self, request):
+        from google import genai
+        api_key = os.getenv("GOOGLE_API_KEY")
+        client = genai.Client(api_key=api_key)
+        chat = client.chats.create(model="gemini-2.0-flash")
+        """ création du serveur websocket"""
+
+        response = chat.send_message("message reçu via le serveur websocket")
+        """print renvoi le (response.text) au client """
+
+
+        for message in chat.get_history():
+            print(f'role - {message.role}',end=": ")
+            print(message.parts[0].text) 

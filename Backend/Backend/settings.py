@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-471^gc1hd!@mt84+hr#30bbkg1efo=q%(e90)$0356a002n$%7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.88.20"] 
 
 # Application definition
 
@@ -44,8 +44,11 @@ INSTALLED_APPS = [
 	'ContactPro',
 	'Treatment',
 	'django_extensions',
+	'channels',
     
 ]
+
+ASGI_APPLICATION = 'Backend.asgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -160,4 +163,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # CORS_ALLOW_ORIGINS = "127.0.0.1:5173"
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Channels Configuration
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
