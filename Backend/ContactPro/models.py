@@ -9,7 +9,7 @@ class Slot(models.Model):
 	doctor = models.ForeignKey(UserAbstract, on_delete=models.CASCADE)
 	
 	def __str__(self):
-		return f"{self.start_time} - {self.end_time} {self.contact_pro.name}"
+		return f"{self.start_time} - {self.end_time} {self.doctor.username}"
 	
 class Appointement(models.Model):
 	patient = models.ForeignKey(UserAbstract, on_delete=models.CASCADE, related_name='patient')
