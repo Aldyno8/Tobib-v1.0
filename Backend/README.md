@@ -475,39 +475,53 @@ En cas d'erreur :
 }
 ```
 
-### Exemple d'Utilisation avec JavaScript
+### Exemple d'Utilisation avec Python
 
-```javascript
-const socket = new WebSocket('ws://localhost:8800/ws/chatbot/');
+```python
+import asyncio
+import websockets
 
-socket.onopen = function(e) {
-    console.log('Connexion établie');
-};
+async def connect_to_websocket_server(uri):
+    try:
+        async with websockets.connect(uri) as websocket:
+            print(f"Connecté au serveur WebSocket : {uri}")
 
-socket.onmessage = function(e) {
-    const data = JSON.parse(e.data);
-    switch(data.type) {
-        case 'connection_established':
-            console.log('Connecté au chatbot');
-            break;
-        case 'chat_message':
-            console.log('Réponse du chatbot:', data.message);
-            break;
-        case 'error':
-            console.error('Erreur:', data.message);
-            break;
-    }
-};
+            message_to_send = '{"message":"Bonjour gemini!"}'
+            await websocket.send(message_to_send)
+            print(f"Message envoyé au serveur : {message_to_send}")
 
-// Envoyer un message
-function sendMessage(message) {
-    socket.send(JSON.stringify({
-        message: message
-    }));
-}
+            while True:
+                try:
+                    received_message = await websocket.recv()
+                    print(f"Message reçu du serveur : {received_message}")
+                except websockets.exceptions.ConnectionClosedOK:
+                    print("Connexion fermée par le serveur.")
+                    break
+                except websockets.exceptions.ConnectionClosedError as e:
+                    print(f"Connexion fermée de manière inattendue : {e}")
+                    break
+                except asyncio.CancelledError:
+                    print("Tâche de réception annulée.")
+                    break
+                except Exception as e:
+                    print(f"Erreur inattendue lors de la réception : {e}")
+                    break
+
+    except ConnectionRefusedError:
+        print(f"Connexion refusée. Assurez-vous que le serveur est en cours d'exécution sur {uri}")
+    except Exception as e:
+        print(f"Une erreur est survenue : {e}")
+
+if __name__ == "__main__":
+    websocket_uri = "ws://192.168.88.19:9000/ws/chat/"
+    
+    asyncio.run(connect_to_websocket_server(websocket_uri))
 ```
 
 ### Notes Importantes
+-Pour lancer le serveur websocket :
+``` daphne -b 0.0.0.0 -p 9000 Backend.asgi:application```
+dans le dossier contenant le backend.
 
 - La connexion WebSocket nécessite une clé API Google valide (GOOGLE_API_KEY)
 - Les messages sont traités de manière asynchrone
